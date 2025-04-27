@@ -65,27 +65,28 @@
  *                   example: "Detailed error (visible in test environment)"
  */
 
+const express = require('express');
+const { param, validationResult } = require('express-validator');
+const Database = require('../config/db');
 
-const express = require("express");
-const Database = require("../config/db");
-const { param, validationResult } = require("express-validator");
 const router = express.Router({ mergeParams: true });
 
-router.get("/",
+router.get(
+  '/',
   [
-    param("taskId")
+    param('taskId')
       .isInt({ gt: 0 })
-      .withMessage("Task ID must be a positive integer."),
+      .withMessage('Task ID must be a positive integer.'),
   ],
-  async (req, res, next) => {
+  async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
 
     try {
-      let db = new Database();
-      let result = await db.getTask(req.params.taskId);
+      const db = new Database();
+      const result = await db.getTask(req.params.taskId);
       if (result.rowCount > 0) {
         res.status(200).render('task.njk', {
           task: {
@@ -93,26 +94,27 @@ router.get("/",
             title: result.rows[0].title,
             description: result.rows[0].description,
             status: result.rows[0].status,
-            due: new Date(result.rows[0].due).toLocaleString("en-GB", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
+            due: new Date(result.rows[0].due).toLocaleString('en-GB', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
               hour12: false,
-            })
-          }
+            }),
+          },
         });
       } else {
-        res.status(404).json({error: 'Task not found'});
+        res.status(404).json({ error: 'Task not found' });
       }
     } catch (err) {
       res.status(500).json({
-        error: 'Internal server error', 
-        message: process.env.NODE_ENV === 'test' ? err.message : undefined
-      })
+        error: 'Internal server error',
+        message: process.env.NODE_ENV === 'test' ? err.message : undefined,
+      });
       console.error('Failed to get task from database: ', err);
     }
-});
+  },
+);
 
 module.exports = router;

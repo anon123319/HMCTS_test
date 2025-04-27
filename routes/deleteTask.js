@@ -60,39 +60,40 @@
  *                   example: "Detailed error (visible in test environment)"
  */
 
-const express = require("express");
-const Database = require("../config/db");
-const { param, validationResult } = require("express-validator");
+const express = require('express');
+const { param, validationResult } = require('express-validator');
+const Database = require('../config/db');
+
 const router = express.Router({ mergeParams: true });
 
-router.delete("/", 
+router.delete(
+  '/',
   [
-    param("taskId")
+    param('taskId')
       .isInt({ gt: 0 })
-      .withMessage("Task ID must be a positive integer."),
+      .withMessage('Task ID must be a positive integer.'),
   ],
-  async (req, res, next) => {
+  async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
-  try {
-    let db = new Database();
-    let result = await db.deleteTask(
-      req.params.taskId,
-    );
-    if (result.rowCount === 1) {
-      res.status(200).redirect("/tasks");
-    } else {
-      res.status(404).json({error: 'Task not deleted'});
+    try {
+      const db = new Database();
+      const result = await db.deleteTask(req.params.taskId);
+      if (result.rowCount === 1) {
+        res.status(200).redirect('/tasks');
+      } else {
+        res.status(404).json({ error: 'Task not deleted' });
+      }
+    } catch (err) {
+      res.status(500).json({
+        error: 'Internal server error',
+        message: process.env.NODE_ENV === 'test' ? err.message : undefined,
+      });
+      console.error('Failed to get task from database: ', err);
     }
-  } catch (err) {
-    res.status(500).json({
-      error: 'Internal server error', 
-      message: process.env.NODE_ENV === 'test' ? err.message : undefined
-    })
-    console.error('Failed to get task from database: ', err);
-  }
-});
+  },
+);
 
 module.exports = router;

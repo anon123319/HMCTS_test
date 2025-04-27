@@ -9,9 +9,6 @@
     "no-console": "off",
     "func-names": "off",
     "no-underscore-dangle": "off",
-    "linebreak-style": [
-      "error",
-      "auto"
-    ]
+    "linebreak-style": "off"
   }
 }

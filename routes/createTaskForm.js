@@ -105,29 +105,27 @@
  *                   example: "Detailed error (visible in test environment)"
  */
 
-
 const express = require("express");
 const Database = require("../config/db");
 const { body, param, validationResult } = require("express-validator");
 const router = express.Router();
 
-router.get("/",
-  async (req, res, next) => {
-    try {
-      const formData = req.session.formData || null;
-      req.session.formData = null;
+router.get("/", async (req, res, next) => {
+  try {
+    const formData = req.session.formData || null;
+    req.session.formData = null;
 
-      res.status(200).render("create-task.njk", {
-        task: formData?.task || {},
-        errors: formData ? formData.errors : [],
-      });
-    } catch (err) {
-      res.status(500).json({
-        error: 'Internal server error', 
-        message: process.env.NODE_ENV === 'test' ? err.message : undefined
-      })
-      console.error('Failed to get task from database: ', err);
-    }
+    res.status(200).render("create-task.njk", {
+      task: formData?.task || {},
+      errors: formData ? formData.errors : [],
+    });
+  } catch (err) {
+    res.status(500).json({
+      error: "Internal server error",
+      message: process.env.NODE_ENV === "test" ? err.message : undefined,
+    });
+    console.error("Failed to get task from database: ", err);
+  }
 });
 
 module.exports = router;

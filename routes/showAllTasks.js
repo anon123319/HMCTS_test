@@ -61,24 +61,21 @@
  *                   example: "Detailed error (visible in test environment)"
  */
 
-const express = require("express");
-const Database = require("../config/db");
+const express = require('express');
+const Database = require('../config/db');
+
 const router = express.Router();
 
-router.get("/", async (req, res, next) => {
+router.get('/', async (req, res) => {
   try {
-    let db = new Database();
-    let result = await db.getAllTasks();
-    if (result.rowCount > 0) {
-      res.status(200).render('tasks.njk', { tasks: result.rows });
-    } else {
-      res.status(404).json({error: 'Tasks not found'});
-    }
+    const db = new Database();
+    const result = await db.getAllTasks();
+    res.status(200).render('tasks.njk', { tasks: result.rows || []});
   } catch (err) {
     res.status(500).json({
-      error: 'Internal server error', 
-      message: process.env.NODE_ENV === 'test' ? err.message : undefined
-    })
+      error: 'Internal server error',
+      message: process.env.NODE_ENV === 'test' ? err.message : undefined,
+    });
     console.error('Failed to get all tasks from database: ', err);
   }
 });

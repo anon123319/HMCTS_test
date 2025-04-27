@@ -70,40 +70,39 @@
  *                   example: "Detailed error (visible in test environment)"
  */
 
+const express = require('express');
+const { param, validationResult } = require('express-validator');
+const Database = require('../config/db');
 
-const express = require("express");
-const Database = require("../config/db");
-const { body, param, validationResult } = require("express-validator");
 const router = express.Router({ mergeParams: true });
 
-router.get("/",
+router.get(
+  '/',
   [
-    param("taskId")
+    param('taskId')
       .isInt({ gt: 0 })
-      .withMessage("Task ID must be a positive integer."),
+      .withMessage('Task ID must be a positive integer.'),
   ],
-  async (req, res, next) => {
+  async (req, res) => {
     const errors = validationResult(req);
     let dueError;
-    errors.array().forEach(err => {
+    errors.array().forEach((err) => {
       if (err.param === 'due') {
         dueError = err.msg;
       }
-    })
+    });
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
     try {
       const formData = req.session.formData || null;
       req.session.formData = null;
-      let db = new Database();
-      let result = await db.getTask(
-        req.params.taskId,
-      );
+      const db = new Database();
+      const result = await db.getTask(req.params.taskId);
       if (result.rowCount > 0) {
         const taskData = formData
-        ? formData.task
-        : {
+          ? formData.task
+          : {
             id: result.rows[0].id,
             title: result.rows[0].title,
             description: result.rows[0].description,
@@ -117,20 +116,21 @@ router.get("/",
             },
           };
 
-          res.status(200).render("edit-task.njk", {
-            task: taskData,
-            errors: formData ? formData.errors : [],
-          });
+        res.status(200).render('edit-task.njk', {
+          task: taskData,
+          errors: formData ? formData.errors : [],
+        });
       } else {
-        res.status(404).json({error: 'Task not found'});
+        res.status(404).json({ error: 'Task not found' });
       }
     } catch (err) {
       res.status(500).json({
-        error: 'Internal server error', 
-        message: process.env.NODE_ENV === 'test' ? err.message : undefined
-      })
+        error: 'Internal server error',
+        message: process.env.NODE_ENV === 'test' ? err.message : undefined,
+      });
       console.error('Failed to get task from database: ', err);
     }
-});
+  },
+);
 
 module.exports = router;
