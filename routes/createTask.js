@@ -191,7 +191,16 @@ router.post(
       };
       return res.redirect('/createTaskForm');
     }
+    const {
+      'due-day': day,
+      'due-month': month,
+      'due-year': year,
+      'due-hour': hour,
+      'due-minutes': minute,
+    } = req.body;
 
+    const dueDate = `${String(year)}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}T${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}:00`;
+    const due = new Date(dueDate);
     const data = req.body;
     try {
       const db = new Database();
@@ -199,7 +208,7 @@ router.post(
         data.title,
         data.description,
         data.status,
-        data.due,
+        due,
       );
       if (result.rowCount > 0) {
         res.redirect('/tasks');
