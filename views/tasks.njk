@@ -1,0 +1,49 @@
+{% from "govuk/components/task-list/macro.njk" import govukTaskList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/footer/macro.njk" import govukFooter %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tasks</title>
+  <link rel="stylesheet" href="/stylesheets/govuk-frontend.min.css">
+</head>
+<body>
+
+{{ govukHeader({
+  homepageUrl: "#"
+}) }}
+
+{{ govukButton({
+  text: "Create new task",
+  href: "/createTaskForm"  
+}) }}
+
+{% set taskItems = [] %}
+{% for task in tasks %}
+  {% set taskItems = (taskItems.push({
+    title: {
+      text: task.title
+    },
+    href: "/getTask/" ~ task.id,
+    status: {
+      text: task.status
+    }
+  }), taskItems) %}
+{% endfor %}
+  
+
+{{ govukTaskList({
+    idPrefix: "tasks",
+    items: taskItems
+}) }}
+
+{{ govukFooter({}) }}
+
+</body>
+</html>

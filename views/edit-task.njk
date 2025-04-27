@@ -1,0 +1,153 @@
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/character-count/macro.njk" import govukCharacterCount %}
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/footer/macro.njk" import govukFooter %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tasks</title>
+  <link rel="stylesheet" href="/stylesheets/govuk-frontend.min.css">
+</head>
+<body>
+
+{% set backUrl = ["/getTask/", task.id] | join %}
+{% set updateUrl = ["/updateTask/", task.id] | join %}
+
+
+{{ govukHeader({
+  homepageUrl: "https://www.gov.uk/"
+}) }}
+
+{{ govukBackLink({
+  text: "Back",
+  href: backUrl
+}) }}
+
+{% set errorMsgs = [] %}
+{% for error in errors %}
+  {% set errorMsgs = (errorMsgs.push({
+    text: error.msg,
+    href: "#"
+  }), errorMsgs) %}
+{% endfor %}
+
+{% if errors.length > 0 %}
+{{ govukErrorSummary({
+  titleText: "There is a problem",
+  errorList: errorMsgs
+}) }}
+{% endif %}
+
+
+<form action="/updateTask/{{ task.id }}/" method="POST" class="govuk-form-group">
+  <input type="hidden" name="_method" value="PUT">
+
+  {{ govukInput({
+    label: {
+      text: "What is the title of the task?"
+    },
+    id: "title",
+    name: "title",
+    value: task.title
+  }) }}
+
+  {{ govukCharacterCount({
+    id: "description",
+    name: "description",
+    maxlength: 500,
+    value: task.description,
+    label: {
+      text: "What is the description of the task?"
+    }
+  }) }}
+
+  {{ govukRadios({
+    name: "status",
+    fieldset: {
+      legend: {
+        text: "What is the status of the task??"
+      }
+    },
+    items: [
+      {
+        value: "todo",
+        text: "TODO",
+        checked: task.status == "TODO" 
+      },
+      {
+        value: "in_progress",
+        text: "IN_PROGRESS",
+        checked: task.status == "IN_PROGRESS"
+      },
+      {
+        value: "done",
+        text: "DONE",
+        checked: task.status == "DONE"
+      }
+    ]
+  }) }}
+
+  {% if dueError %}
+  {% set error = {test: dueError} %}
+  {% else %}
+  {% set error = null %}
+  {% endif %}
+
+  {{ govukDateInput({
+    id: "due",
+    namePrefix: "due",
+    fieldset: {
+      legend: {
+        text: "When is this task due?",
+        classes: "govuk-fieldset__legend--l"
+      }
+    },
+    hint: {
+      text: "For example, 27 3 2007. The year must be between 2000 and 2100. The time must be in 24 hour format."
+    },
+    errorMessage: error,
+    items: [ 
+      {
+        classes: "govuk-input--width-2",
+        name: "day",
+        value: task.due.day
+      },
+      {
+        classes: "govuk-input--width-2",
+        name: "month",
+        value: task.due.month
+      },
+      {
+        classes: "govuk-input--width-4",
+        name: "year",
+        value: task.due.year
+      },
+      {
+        classes: "govuk-input--width-2",
+        name: "hour",
+        value: task.due.hour
+      },
+      {
+        classes: "govuk-input--width-2",
+        name: "minutes",
+        value: task.due.minute
+      }
+    ]
+  }) }}
+  <button type="submit" class="govuk-button">Update Task</button>
+</form>
+
+
+
+{{ govukFooter({}) }}
+
+</body>
+</html>

@@ -1,0 +1,92 @@
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/footer/macro.njk" import govukFooter %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tasks</title>
+  <link rel="stylesheet" href="/stylesheets/govuk-frontend.min.css">
+</head>
+<body>
+
+{{ govukHeader({
+  homepageUrl: "https://www.gov.uk/"
+}) }}
+
+{{ govukBackLink({
+  text: "Back",
+  href: "/tasks"
+}) }}
+
+{% set rows = [
+  {
+    key: {
+      text: "Title"
+    },
+    value: {
+      text: task.title
+    }
+  },
+  {
+    key: {
+      text: "Status"
+    },
+    value: {
+      html: task.status
+    }
+  },
+  {
+    key: {
+      text: "Due"
+    },
+    value: {
+      html: task.due
+    }
+  }
+] %}
+
+{% if task.description %}
+{% set rows = (rows.push({
+  key: {
+    text: "Description"
+  },
+  value: {
+    text: task.description
+  }
+}), rows) %}
+{% endif %}
+
+{{ govukSummaryList({
+  rows: rows
+}) }}
+
+{% set editUrl = ["/updateTaskForm/", task.id] | join %}
+
+{{ govukButton({
+  text: "Edit Task",
+  href: editUrl
+}) }}
+
+
+<form action="/deleteTask/{{ task.id }}" method="POST" class="govuk-form-group">
+  <input type="hidden" name="_method" value="DELETE">
+  {{ govukButton({
+    text: "Delete Task",
+    classes: "govuk-button--warning",
+    type: "submit"
+  }) }}
+</form>
+
+
+{{ govukFooter({}) }}
+
+</body>
+</html>
