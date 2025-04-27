@@ -2,19 +2,6 @@ const request = require("supertest");
 const app = require("../../app.js");
 const Database = require("../../config/db.js");
 
-let db;
-
-beforeEach(async () => {
-  process.env.NODE_ENV = "test";
-  db = new Database();
-  await db.initialiseTestDatabase();
-});
-
-afterEach(async () => {
-  await db.dropTestDatabase();
-  db = null;
-  process.env.NODE_ENV = "dev";
-});
 
 describe("Unit tests for endpoints", () => {
   test("GET /tasks - should retrieve all tasks", async () => {
