@@ -39,7 +39,7 @@ Please follow these steps to set up the database for this API to run locally:
 To run the server:
 
 1. Please ensure you are using at least Node version 18.x.y
-2. Run the command `npm run dev` to run it in dev mode or run the command `npm run` to run it in
+2. Run the command `npm run dev` to run it in dev mode or run the command `npm start` to run it in
    production mode. Make sure to run the command in the root of this project.
 
 API Documentation:
