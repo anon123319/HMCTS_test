@@ -1,0 +1,8 @@
+NODE_ENV=dev
+PSQL_ADMIN_USER=postgres
+PSQL_ADMIN_PASSWORD=password
+PSQL_ADMIN_DATABASE=postgres
+PSQL_HOST=localhost
+PSQL_DATABASE=case_management
+PSQL_PORT=5432
+SESSION_SECRET=secret

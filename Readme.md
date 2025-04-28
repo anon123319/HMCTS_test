@@ -1,25 +1,6 @@
-Note: You do not need to start the server before executing the API endpoint unit tests. The npm library 'supertest' spins up the server.
+Please follow these steps to set up the database for this application to run locally.
 
-To run the API unit tests that assert on responses from the database:
-- Run `npm install` if you haven't done so yet.
-
-- Run `npm run test:endpoints` in the terminal within the root of this project.
-
-To run the unit tests that test API endpoint validation:
-
-- Run `npm test:endpoints_validation` in the terminal within the root of this project.
-
-To run the utility function unit tests:
-
-- Run `npm run test:utils` in the terminal within the root of this project.
-
-To run all of the unit tests in this project:
-
-- Run `npm test` in the terminal within the root of this project.
-
-Please follow these steps to set up the database for this API to run locally:
-
-1. Create an environment file in the root of this repository, called '.env' and populate it with the following properties (Please see the sample .example-env file in root):
+1. Create an environment file in the root of this repository, called '.env' and populate it with the following properties (Please see the sample example-env file in root):
 
 - PSQL_ADMIN_USER (The username you use to authenticate into PostgreSQL).
 - PSQL_ADMIN_DATABASE (the admin database on your PSQL server from where you can create other databases).
@@ -40,9 +21,30 @@ Please follow these steps to set up the database for this API to run locally:
 To run the application:
 
 1. Please ensure you are using Node version 18.x.y
-2. Run `npm install` if you haven't done so yet.
+2. Run `npm install` from root, if you haven't done so yet.
 3. Run the command `npm run dev` to run it in dev mode or run the command `npm start` to run it in
   production mode. Make sure to run the command in the root of this project.
 
 API Documentation:
 You can find the API Swagger documentation at `/api-docs` e.g. `http://localhost:3000/api-docs/`
+
+
+Note: You do not need to start the server before executing the API endpoint unit tests. The npm library 'supertest' spins up the server. You can run the unit tests without a .env file in root. 
+
+To run the API unit tests that assert on responses from the database:
+- Run `npm install` if you haven't done so yet.
+
+- Run `npm run test:endpoints` in the terminal within the root of this project.
+
+To run the unit tests that test API endpoint validation:
+
+- Run `npm run test:endpoints_validation` in the terminal within the root of this project.
+
+To run the utility function unit tests:
+
+- Run `npm run test:utils` in the terminal within the root of this project.
+
+To run all of the unit tests in this project:
+
+- Run `npm test` in the terminal within the root of this project.
+

@@ -4,22 +4,10 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 class Database {
-  constructor() {
-    this.isTest = process.env.NODE_ENV === 'test';
-  }
+  constructor() {}
 
   async dbQuery(statement, ...parameters) {
-    let client = new Client({
-      user: process.env.PSQL_ADMIN_USER,
-      host: this.host,
-      database: 'test_db',
-      password: process.env.PSQL_ADMIN_PASSWORD,
-      port: this.port,
-      connectionTimeoutMillis: 5000,
-      query_timeout: 5000,
-    });
-
-    client = new Client({
+    const client = new Client({
       user: process.env.PSQL_ADMIN_USER,
       host: process.env.PSQL_HOST,
       database: process.env.PSQL_DATABASE,
@@ -76,7 +64,6 @@ class Database {
 
   async updateTask(id, title, description, status, due) {
     if (this.argsAreNullOrUndefined(id, title, description, status, due)) {
-      console.log(id, title, description, status, due);
       throw new Error('No argument can cannot be undefined or null');
     }
 
