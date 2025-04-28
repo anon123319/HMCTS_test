@@ -3,7 +3,6 @@
  * /tasks/{taskId}:
  *   get:
  *     summary: Get task details for editing
- *     description: Retrieves task details to populate an edit form. Includes validation errors if present in session.
  *     tags: [Tasks]
  *     parameters:
  *       - in: path
@@ -16,19 +15,9 @@
  *         description: Numeric ID of the task to edit
  *     responses:
  *       200:
- *         description: Task data retrieved successfully (renders edit-task.njk template)
- *         content:
- *           text/html:
- *             schema:
- *               type: string
- *             description: Rendered edit form with task data and any validation errors
- *         headers:
- *           Set-Cookie:
- *             schema:
- *               type: string
- *             description: Clears formData session after rendering
+ *         description: Task data retrieved successfully (renders edit form)
  *       400:
- *         description: Invalid task ID format
+ *         description: Invalid task ID
  *         content:
  *           application/json:
  *             schema:
@@ -45,29 +34,13 @@
  *                       param:
  *                         type: string
  *                         example: "taskId"
+ *                       location:
+ *                         type: string
+ *                         example: "params"
  *       404:
  *         description: Task not found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: "Task not found"
  *       500:
  *         description: Internal server error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: "Internal server error"
- *                 message:
- *                   type: string
- *                   example: "Detailed error (visible in test environment)"
  */
 
 const express = require('express');
@@ -121,11 +94,11 @@ router.get(
           errors: formData ? formData.errors : [],
         });
       } else {
-        res.status(404).json({ error: 'Task not found' });
+        res.status(404).render('not-found.njk');
       }
     } catch (err) {
-      res.status(500).json({
-        error: 'Internal server error',
+      res.status(500).render('not-found.njk', {
+        title: 'Error',
         message: process.env.NODE_ENV === 'test' ? err.message : undefined,
       });
       console.error('Failed to get task from database: ', err);

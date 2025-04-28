@@ -47,6 +47,7 @@
 {% endif %}
 
 
+
 <form action="/updateTask/{{ task.id }}/" method="POST" class="govuk-form-group">
   <input type="hidden" name="_method" value="PUT">
 
@@ -78,19 +79,19 @@
     },
     items: [
       {
-        value: "todo",
-        text: "TODO",
-        checked: task.status == "TODO" 
+        value: "to_do",
+        text: "To do",
+        checked: task.status == "to_do" 
       },
       {
         value: "in_progress",
-        text: "IN_PROGRESS",
-        checked: task.status == "IN_PROGRESS"
+        text: "In progress",
+        checked: task.status == "in_progress"
       },
       {
         value: "done",
-        text: "DONE",
-        checked: task.status == "DONE"
+        text: "Done",
+        checked: task.status == "done"
       }
     ]
   }) }}

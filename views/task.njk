@@ -26,6 +26,12 @@
   href: "/tasks"
 }) }}
 
+{% set statusMap = {
+  'in_progress': 'In Progress',
+  'to_do': 'To do',
+  'done': 'Done'
+} %}
+
 {% set rows = [
   {
     key: {
@@ -40,7 +46,7 @@
       text: "Status"
     },
     value: {
-      html: task.status
+      html:  statusMap[task.status]
     }
   },
   {

@@ -3,7 +3,6 @@
  * /tasks/{taskId}:
  *   get:
  *     summary: Get a task by ID
- *     description: Retrieves a specific task by its ID
  *     tags: [Tasks]
  *     parameters:
  *       - in: path
@@ -16,14 +15,9 @@
  *         description: Numeric ID of the task to retrieve
  *     responses:
  *       200:
- *         description: Task retrieved successfully (renders task.njk template)
- *         content:
- *           text/html:
- *             schema:
- *               type: string
- *             description: Rendered HTML page with task details
+ *         description: Task retrieved successfully (renders HTML view)
  *       400:
- *         description: Validation error
+ *         description: Invalid task ID
  *         content:
  *           application/json:
  *             schema:
@@ -40,29 +34,13 @@
  *                       param:
  *                         type: string
  *                         example: "taskId"
+ *                       location:
+ *                         type: string
+ *                         example: "params"
  *       404:
  *         description: Task not found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: "Task not found"
  *       500:
  *         description: Internal server error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: "Internal server error"
- *                 message:
- *                   type: string
- *                   example: "Detailed error (visible in test environment)"
  */
 
 const express = require('express');
@@ -105,11 +83,11 @@ router.get(
           },
         });
       } else {
-        res.status(404).json({ error: 'Task not found' });
+        res.status(404).render('not-found.njk');
       }
     } catch (err) {
-      res.status(500).json({
-        error: 'Internal server error',
+      res.status(500).render('not-found.njk', {
+        title: 'Error',
         message: process.env.NODE_ENV === 'test' ? err.message : undefined,
       });
       console.error('Failed to get task from database: ', err);

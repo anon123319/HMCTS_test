@@ -3,7 +3,6 @@
  * /tasks/{taskId}:
  *   put:
  *     summary: Update a task by ID
- *     description: Updates an existing task with the given ID
  *     tags: [Tasks]
  *     parameters:
  *       - in: path
@@ -34,47 +33,47 @@
  *                 minLength: 3
  *                 maxLength: 100
  *                 example: "Updated project"
- *                 description: Task title (3-100 chars)
+ *                 description: Task title (3-100 characters)
  *               description:
  *                 type: string
  *                 maxLength: 500
  *                 example: "Updated project description"
- *                 description: Optional task description (max 500 chars)
+ *                 description: Optional task description (max 500 characters)
  *               status:
  *                 type: string
- *                 enum: ["TODO", "IN_PROGRESS", "DONE"]
- *                 example: "IN_PROGRESS"
+ *                 enum: [to_do, in_progress, done]
+ *                 example: in_progress
  *                 description: Task status
  *               due-day:
  *                 type: integer
  *                 minimum: 1
  *                 maximum: 31
  *                 example: 15
- *                 description: Day of due date (1-31)
+ *                 description: Day component of due date (1-31)
  *               due-month:
  *                 type: integer
  *                 minimum: 1
  *                 maximum: 12
  *                 example: 12
- *                 description: Month of due date (1-12)
+ *                 description: Month component of due date (1-12)
  *               due-year:
  *                 type: integer
  *                 minimum: 2000
  *                 maximum: 2100
  *                 example: 2023
- *                 description: Year of due date (2000-2100)
+ *                 description: Year component of due date (2000-2100)
  *               due-hour:
  *                 type: integer
  *                 minimum: 0
- *                 maximum: 24
+ *                 maximum: 23
  *                 example: 14
- *                 description: Hour of due time (0-24)
+ *                 description: Hour component of due time (0-23)
  *               due-minutes:
  *                 type: integer
  *                 minimum: 0
- *                 maximum: 60
+ *                 maximum: 59
  *                 example: 30
- *                 description: Minutes of due time (0-60)
+ *                 description: Minutes component of due time (0-59)
  *     responses:
  *       302:
  *         description: Redirects to /tasks on success or to update form on validation error
@@ -96,29 +95,13 @@
  *                       param:
  *                         type: string
  *                         example: "title"
+ *                       location:
+ *                         type: string
+ *                         example: "body"
  *       404:
  *         description: Task not found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: "Task not found"
  *       500:
  *         description: Internal server error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: "Internal server error"
- *                 message:
- *                   type: string
- *                   example: "Detailed error (visible in test environment)"
  */
 
 const express = require('express');
@@ -149,9 +132,8 @@ router.put(
 
     body('status')
       .trim()
-      .toUpperCase()
-      .isIn(['TODO', 'IN_PROGRESS', 'DONE'])
-      .withMessage('Status must be one of TODO, IN_PROGRESS, DONE.'),
+      .isIn(['to_do', 'in_progress', 'done'])
+      .withMessage('Status must be one of to do, in progress or done.'),
 
     body('due-day')
       .notEmpty()
@@ -254,8 +236,8 @@ router.put(
         res.status(404).json({ error: 'Task not found' });
       }
     } catch (err) {
-      res.status(500).json({
-        error: 'Internal server error',
+      res.status(500).render('not-found.njk', {
+        title: 'Error',
         message: process.env.NODE_ENV === 'test' ? err.message : undefined,
       });
       console.error('Failed to get task from database: ', err);

@@ -3,7 +3,6 @@
  * /tasks/{taskId}:
  *   delete:
  *     summary: Delete a task by ID
- *     description: Deletes an existing task with the given ID
  *     tags: [Tasks]
  *     parameters:
  *       - in: path
@@ -17,8 +16,13 @@
  *     responses:
  *       302:
  *         description: Redirects to /tasks on successful deletion
+ *         headers:
+ *           Location:
+ *             schema:
+ *               type: string
+ *             example: "/tasks"
  *       400:
- *         description: Validation error
+ *         description: Invalid task ID
  *         content:
  *           application/json:
  *             schema:
@@ -35,29 +39,13 @@
  *                       param:
  *                         type: string
  *                         example: "taskId"
+ *                       location:
+ *                         type: string
+ *                         example: "params"
  *       404:
- *         description: Task not found or not deleted
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: "Task not deleted"
+ *         description: Task not found
  *       500:
  *         description: Internal server error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 error:
- *                   type: string
- *                   example: "Internal server error"
- *                 message:
- *                   type: string
- *                   example: "Detailed error (visible in test environment)"
  */
 
 const express = require('express');
@@ -84,11 +72,11 @@ router.delete(
       if (result.rowCount === 1) {
         res.status(200).redirect('/tasks');
       } else {
-        res.status(404).json({ error: 'Task not deleted' });
+        res.status(404).render('not-found.njk');
       }
     } catch (err) {
-      res.status(500).json({
-        error: 'Internal server error',
+      res.status(500).render('not-found.njk', {
+        title: 'Error',
         message: process.env.NODE_ENV === 'test' ? err.message : undefined,
       });
       console.error('Failed to get task from database: ', err);

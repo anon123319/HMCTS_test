@@ -24,6 +24,11 @@
   href: "/createTaskForm"  
 }) }}
 
+{% set statusMap = {
+  'in_progress': 'In Progress',
+  'to_do': 'To do',
+  'done': 'Done'
+} %}
 {% set taskItems = [] %}
 {% for task in tasks %}
   {% set taskItems = (taskItems.push({
@@ -32,11 +37,10 @@
     },
     href: "/getTask/" ~ task.id,
     status: {
-      text: task.status
+      text: statusMap[task.status]
     }
   }), taskItems) %}
 {% endfor %}
-  
 
 {{ govukTaskList({
     idPrefix: "tasks",

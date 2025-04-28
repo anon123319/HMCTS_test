@@ -57,13 +57,13 @@ describe('createTask Validation Tests', () => {
     const middleware = body('status')
       .trim()
       .toUpperCase()
-      .isIn(['TODO', 'IN_PROGRESS', 'DONE'])
-      .withMessage('Status must be one of TODO, IN_PROGRESS, DONE.');
+      .isIn(['to_do', 'in_progress', 'done'])
+      .withMessage('Status must be one of to do, in progress or done.');
     await runMiddleware(req, middleware);
     const errors = validationResult(req);
     expect(errors.isEmpty()).toBe(false);
     expect(errors.array()[0].msg).toBe(
-      'Status must be one of TODO, IN_PROGRESS, DONE.',
+      'Status must be one of to do, in progress or done.',
     );
   });
 

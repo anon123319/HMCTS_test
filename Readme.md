@@ -22,8 +22,9 @@ To run the application:
 
 1. Please ensure you are using Node version 18.x.y
 2. Run `npm install` from root, if you haven't done so yet.
-3. Run the command `npm run dev` to run it in dev mode or run the command `npm start` to run it in
-  production mode. Make sure to run the command in the root of this project.
+3. Run the command `npm run dev` to run it in dev mode or run the command `npm start` to run it in production mode. Make sure to run the command in the root of this project.
+
+The home page of this appliction is `tasks` e.g. `http://localhost:3000/tasks/`
 
 API Documentation:
 You can find the API Swagger documentation at `/api-docs` e.g. `http://localhost:3000/api-docs/`

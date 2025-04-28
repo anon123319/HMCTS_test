@@ -24,52 +24,58 @@
  *                 minLength: 3
  *                 maxLength: 100
  *                 example: "Project outline"
- *                 description: Task title (3-100 chars)
+ *                 description: Task title (3-100 characters)
  *               description:
  *                 type: string
  *                 maxLength: 500
- *                 example: "Outline the project"
- *                 description: Optional task description (max 500 chars)
+ *                 example: "Outline the project requirements"
+ *                 description: Optional task description (max 500 characters)
  *               status:
  *                 type: string
- *                 enum: ["TODO", "IN_PROGRESS", "DONE"]
- *                 example: "TODO"
- *                 description: Task status
- *               "due-day":
+ *                 enum: [to_do, in_progress, done]
+ *                 default: to_do
+ *                 example: to_do
+ *                 description: Current status of the task
+ *               due-day:
  *                 type: integer
  *                 minimum: 1
  *                 maximum: 31
  *                 example: 15
- *                 description: Day of due date (1-31)
- *               "due-month":
+ *                 description: Day component of due date (1-31)
+ *               due-month:
  *                 type: integer
  *                 minimum: 1
  *                 maximum: 12
  *                 example: 12
- *                 description: Month of due date (1-12)
- *               "due-year":
+ *                 description: Month component of due date (1-12)
+ *               due-year:
  *                 type: integer
  *                 minimum: 1900
  *                 maximum: 2100
  *                 example: 2023
- *                 description: Year of due date (1900-2100)
- *               "due-hour":
+ *                 description: Year component of due date (1900-2100)
+ *               due-hour:
  *                 type: integer
  *                 minimum: 0
- *                 maximum: 24
- *                 example: 23
- *                 description: Hour of due time (0-24)
- *               "due-minutes":
+ *                 maximum: 23
+ *                 example: 14
+ *                 description: Hour component of due time (0-23)
+ *               due-minutes:
  *                 type: integer
  *                 minimum: 0
- *                 maximum: 60
- *                 example: 59
- *                 description: Minutes of due time (0-60)
+ *                 maximum: 59
+ *                 example: 30
+ *                 description: Minutes component of due time (0-59)
  *     responses:
  *       302:
- *         description: Redirects to /tasks on success
- *       422:
- *         description: Validation error
+ *         description: Redirects to /tasks on successful creation
+ *         headers:
+ *           Location:
+ *             schema:
+ *               type: string
+ *             example: "/tasks"
+ *       400:
+ *         description: Invalid request data
  *         content:
  *           application/json:
  *             schema:
@@ -86,8 +92,19 @@
  *                       param:
  *                         type: string
  *                         example: "title"
+ *                       location:
+ *                         type: string
+ *                         example: "body"
  *       500:
  *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   example: "Failed to create task in database"
  */
 
 const express = require('express');
@@ -114,9 +131,8 @@ router.post(
 
     body('status')
       .trim()
-      .toUpperCase()
-      .isIn(['TODO', 'IN_PROGRESS', 'DONE'])
-      .withMessage('Status must be one of TODO, IN_PROGRESS, DONE.'),
+      .isIn(['to_do', 'in_progress', 'done'])
+      .withMessage('Status must be one of to do, in progress or done.'),
 
     body('due-day')
       .notEmpty()
@@ -213,11 +229,11 @@ router.post(
       if (result.rowCount > 0) {
         res.redirect('/tasks');
       } else {
-        res.status(404).json({ error: 'Task not created' });
+        res.status(404).render('not-found.njk');
       }
     } catch (err) {
-      res.status(500).json({
-        error: 'Internal server error',
+      res.status(500).render('not-found.njk', {
+        title: 'Error',
         message: process.env.NODE_ENV === 'test' ? err.message : undefined,
       });
       console.error('Failed to create task in database: ', err);
