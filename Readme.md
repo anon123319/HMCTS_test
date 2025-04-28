@@ -30,7 +30,7 @@ Please follow these steps to set up the database for this API to run locally:
 
 2. Create the database using this command in your terminal: ‘createdb case_management’
 
-3. Navigate to the 'config' directory in this repo, in the terminal, and run this command to
+3. Navigate to the root directory of this repo, in the terminal, and run this command to
    execute the database schema: `psql -d case_management -f schema.sql`
 
 4. Navigate to the 'config' directory in this repo, in the terminal, and run this command to seed
