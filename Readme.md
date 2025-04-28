@@ -7,7 +7,7 @@ To run the API unit tests that assert on responses from the database:
 
 To run the unit tests that test API endpoint validation:
 
-- Run `npm run test:endpoints_validation` in the terminal within the root of this project.
+- Run `npm test:endpoints_validation` in the terminal within the root of this project.
 
 To run the utility function unit tests:
 
@@ -24,8 +24,7 @@ Please follow these steps to set up the database for this API to run locally:
 - PSQL_ADMIN_USER (The username you use to authenticate into PostgreSQL).
 - PSQL_ADMIN_DATABASE (the admin database on your PSQL server from where you can create other databases).
 - PSQL_HOST (The hostname/IP address where the PostgreSQL server will run on your machine).
-- PSQL_DATABASE (The name of the database that will store application data - call it 'case_management')
-  that the unit tests will run against.)
+- PSQL_DATABASE=case_management
 - PSQL_ADMIN_PASSWORD (The password for PSQL_USER)
 - PSQL_PORT (The port number PostgreSQL is listening on. The default is 5432)
 - SESSION_SECRET (this will be your session secret key)
